@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<h1>Reporte de Análisis</h1>
+
+<h2>Capítulo: {{ capitulo }}</h2>
+
+<h3>Similitudes</h3>
+<ul>
+    <li><strong>Funciones ↔ CV:</strong> {{ reporte.sim_fun_cv }}</li>
+    <li><strong>Perfil ↔ CV:</strong> {{ reporte.sim_prof_cv }}</li>
+    <li><strong>Funciones ↔ Perfil:</strong> {{ reporte.sim_fun_prof }}</li>
+</ul>
+
+<h3>Conclusiones</h3>
+<ul>
+    <li>{{ reporte.con_fun }}</li>
+    <li>{{ reporte.con_prof }}</li>
+    <li>{{ reporte.coherencia }}</li>
+</ul>
+
+<a href="/">Volver</a>
+
+</body>
+</html>
