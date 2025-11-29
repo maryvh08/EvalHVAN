@@ -1,3 +1,5 @@
+from utils.text_processing import clean_text, compute_similarity
+from utils.pdf_reader import extract_text_from_pdf
 from flask import Flask, render_template, request
 import json
 from utils.pdf_reader import pdf_to_text
