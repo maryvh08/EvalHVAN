@@ -2,29 +2,38 @@
 <html>
 <head>
     <title>Reporte</title>
-    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
 
-<h1>Reporte de Análisis</h1>
+<h1>Reporte de análisis para {{nombre}} ({{cargo}})</h1>
 
-<h2>Capítulo: {{ capitulo }}</h2>
+<h2>Funciones</h2>
+{% for f in funciones %}
+<p><b>{{f.item}}</b>: {{f.score}} / 5</p>
+{% endfor %}
 
-<h3>Similitudes</h3>
+<h2>Perfil</h2>
+{% for p in perfil %}
+<p><b>{{p.item}}</b>: {{p.score}} / 5</p>
+{% endfor %}
+
+<h2>Indicadores</h2>
+{% for i in indicadores %}
+<p><b>{{i.indicador}}</b>: {{i.score}} / 5</p>
+{% endfor %}
+
+<h2>Recomendaciones</h2>
+{% for r in recomendaciones %}
+<h3>{{r.indicador}}</h3>
 <ul>
-    <li><strong>Funciones ↔ CV:</strong> {{ reporte.sim_fun_cv }}</li>
-    <li><strong>Perfil ↔ CV:</strong> {{ reporte.sim_prof_cv }}</li>
-    <li><strong>Funciones ↔ Perfil:</strong> {{ reporte.sim_fun_prof }}</li>
+    {% for c in r.consejos %}
+    <li>{{c}}</li>
+    {% endfor %}
 </ul>
+{% endfor %}
 
-<h3>Conclusiones</h3>
-<ul>
-    <li>{{ reporte.con_fun }}</li>
-    <li>{{ reporte.con_prof }}</li>
-    <li>{{ reporte.coherencia }}</li>
-</ul>
-
-<a href="/">Volver</a>
+<h2>Puntuación Global</h2>
+<p>{{final_score}} / 5</p>
 
 </body>
 </html>
