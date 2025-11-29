@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f4f7;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #002b5c;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+#form-section, #report-section {
+    width: 85%;
+    margin: 20px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+label {
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 20px 0;
+    border-radius: 5px;
+    border: 1px solid #bbb;
+}
+
+button {
+    background: #0074d9;
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #005bb5;
+}
+
+#report-container {
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.report-block {
+    background: #eef3fc;
+    padding: 15px;
+    border-left: 4px solid #003a80;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
