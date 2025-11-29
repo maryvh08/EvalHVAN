@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Analizador de CV</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <title>ATS ANEIAP</title>
 </head>
 <body>
 
-<h1>Analizador de Perfil, Funciones y Hoja de Vida</h1>
+<h1>Analizador de Hoja de Vida ANEIAP</h1>
 
 <form action="/analizar" method="POST" enctype="multipart/form-data">
 
-    <label>Seleccione Capítulo:</label>
-    <select name="capitulo" required>
-        {% for cap in capitulos %}
-        <option value="{{ cap }}">{{ cap }}</option>
+    <label>Nombre del aspirante:</label>
+    <input type="text" name="nombre" required><br>
+
+    <label>Cargo al que aspira:</label>
+    <select name="cargo" required>
+        {% for c in cargos %}
+        <option value="{{c}}">{{c}}</option>
         {% endfor %}
-    </select>
+    </select><br>
 
-    <label>Archivo FXX (Funciones):</label>
-    <input type="file" name="fxx" accept=".json" required>
+    <label>Capítulo:</label>
+    <select name="capitulo" required>
+        {% for u in universidades %}
+        <option value="{{u}}">{{u}}</option>
+        {% endfor %}
+    </select><br>
 
-    <label>Archivo PXX (Perfil):</label>
-    <input type="file" name="pxx" accept=".json" required>
+    <label>Sube tu hoja de vida (PDF):</label>
+    <input type="file" name="pdf" accept="application/pdf" required><br>
 
-    <label>Hoja de Vida (PDF):</label>
-    <input type="file" name="cv" accept="application/pdf" required>
+    <button type="submit">Analizar</button>
 
-    <button type="submit">Generar Reporte</button>
 </form>
 
 </body>
