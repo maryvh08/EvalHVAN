@@ -3,189 +3,277 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ATS - Evaluación de hojas de vida (Starter)</title>
+  <title>ATS simple (cliente) — Demo</title>
   <style>
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;max-width:980px;margin:18px auto;padding:18px}
-    header{display:flex;align-items:center;gap:12px}
-    h1{font-size:1.4rem;margin:0}
-    label{display:block;margin:10px 0 4px}
-    input,select,button{padding:8px;border-radius:6px;border:1px solid #ccc;width:100%}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    pre{white-space:pre-wrap;background:#fafafa;padding:12px;border-radius:8px;border:1px solid #eee}
-    .card{padding:12px;border-radius:8px;border:1px solid #eee;background:#fff;margin-top:12px}
+    /* Muy simple CSS para que se vea bien en móvil y escritorio */
+    :root{--accent:#0b74de;--muted:#666}
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0;padding:24px;background:#f7f9fb;color:#111}
+    .container{max-width:980px;margin:0 auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 20px rgba(20,30,60,.06)}
+    h1{font-size:20px;margin:0 0 14px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input,select,textarea,button{font-size:14px;padding:10px;border:1px solid #e1e7ef;border-radius:8px;width:100%;box-sizing:border-box}
+    textarea{min-height:140px}
+    .col{flex:1;min-width:220px}
+    .btn{background:var(--accent);color:#fff;border:none;cursor:pointer}
+    .output{margin-top:18px;border-top:1px dashed #e6eef8;padding-top:14px}
+    .section{padding:8px 0}
+    .score{font-weight:700;color:var(--accent)}
+    pre{white-space:pre-wrap;background:#f2f6fb;padding:12px;border-radius:8px}
+    .small{font-size:13px;color:var(--muted)}
+    footer{margin-top:18px;font-size:13px;color:var(--muted)}
   </style>
-  <!-- Libraries (CDN) -->
-  <!-- pdf.js (to extract text from uploaded PDF CV) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.7.107/pdf.min.js"></script>
-  <!-- Fuse.js for fuzzy keyword matching -->
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
 </head>
 <body>
-  <header>
-    <img src="data:;base64,iVBORw0KGgo=" alt="logo" style="width:56px;height:56px;background:#eee;border-radius:8px"/>
-    <div>
-      <h1>ATS simple (starter) — Evaluación automática de hojas de vida</h1>
-      <small>Sube tu CV, selecciona capítulo y cargo. La evaluación se realiza en el navegador (100% gratis).</small>
-    </div>
-  </header>
+  <div class="container">
+    <h1>ATS simple (cliente) — Analizador de hoja de vida</h1>
+    <p class="small">Interfaz básica para analizar CVs **completamente en el navegador**. Ideal para desplegar en GitHub Pages. Soporta pegar texto o subir PDF (extrae texto si el navegador lo permite). No requiere servidor.</p>
 
-  <section class="card">
-    <label for="name">Nombre del aspirante</label>
-    <input id="name" placeholder="Ej: María Pérez" />
-
-    <label for="chapter">Capítulo / Universidad</label>
-    <select id="chapter">
-      <option value="u1">Universidad A</option>
-      <option value="u2">Universidad B</option>
-    </select>
-
-    <label for="position">Cargo al que aspira</label>
-    <select id="position">
-      <option value="PC">PC</option>
-      <option value="IC">IC</option>
-      <option value="CCP">CCP</option>
-      <option value="DCA">DCA</option>
-      <option value="DCC">DCC</option>
-      <option value="DCD">DCD</option>
-      <option value="DCF">DCF</option>
-      <option value="DCM">DCM</option>
-    </select>
-
-    <label for="cvfile">Hoja de vida (PDF)</label>
-    <input id="cvfile" type="file" accept="application/pdf" />
-
-    <div style="margin-top:12px;display:flex;gap:8px">
-      <button id="run">Generar análisis</button>
-      <button id="reset">Limpiar</button>
+    <div class="row">
+      <div class="col">
+        <label>Nombre del aspirante</label>
+        <input id="name" placeholder="Ej: Ana Pérez" />
+      </div>
+      <div class="col">
+        <label>Cargo al que aspira</label>
+        <select id="role">
+          <option>PC</option>
+          <option>IC</option>
+          <option>CCP</option>
+          <option>DCA</option>
+          <option>DCC</option>
+          <option>DCD</option>
+          <option>DCF</option>
+          <option>DCM</option>
+        </select>
+      </div>
     </div>
 
-    <small style="display:block;margin-top:8px">Nota: Para que el análisis use las listas de funciones/perfiles e indicadores, sube esos archivos al repositorio y actualiza las rutas en <code>dataConfig</code> (ver README en repo).</small>
-  </section>
+    <div style="margin-top:12px" class="row">
+      <div class="col">
+        <label>Capítulo (universidad)</label>
+        <select id="chapter"><option value="">Cargando...</option></select>
+      </div>
+      <div class="col">
+        <label>Adjuntar archivo (.txt o .pdf) — opcional</label>
+        <input id="file" type="file" accept=".txt,.pdf" />
+      </div>
+    </div>
 
-  <section id="output" class="card" style="display:none">
-    <h2 id="title"></h2>
-    <div id="summary"></div>
-    <h3>Resultados por sección</h3>
-    <div id="results"></div>
-    <h3>Comentarios finales</h3>
-    <pre id="comments"></pre>
-  </section>
+    <div style="margin-top:12px">
+      <label>O pega aquí el texto de la hoja de vida</label>
+      <textarea id="cvtext" placeholder="Pega el texto de la hoja de vida... (recomendado para mejor extracción)"></textarea>
+    </div>
 
-  <script>
-  // --------------------- CONFIG (edit these file paths in your repo) ---------------------
-  // Put your FXX.pdf and PXX.pdf converted to plain lists, OR better: export the lists to JSON and place them
-  // into the repo and update paths here. Example structure in repo: /data/functions_PC.json /data/profiles_PC.json /data/indicators.json /data/indicators.json.json
-  const dataConfig = {
-    functionsBase: '/data/functions_', // append POSITION + '.json'
-    profilesBase: '/data/profiles_',
-    indicatorsFile: '/data/indicators.json',
-    keywordsFile: '/data/indicators.json.json'
-  };
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button id="analyze" class="btn">Analizar</button>
+      <button id="clear">Limpiar</button>
+    </div>
 
-  // --------------------- HELPERS ---------------------
-  async function fetchJson(path){ try{ const r = await fetch(path); if(!r.ok) throw new Error('not found'); return await r.json(); }catch(e){ return null; } }
+    <div id="report" class="output" aria-live="polite"></div>
 
-  function cleanText(t){ return t.replace(/[\n\r]+/g,' ').replace(/\s+/g,' ').trim().toLowerCase(); }
+    <footer>Coloca tus archivos JSON en la carpeta <code>/data</code> del repositorio: FXX.json, PXX.json, indicators.json, advices.json. Más instrucciones abajo.</footer>
+  </div>
 
-  function jaccard(a,b){ const A = new Set(a.split(' ')); const B = new Set(b.split(' ')); const inter = [...A].filter(x=>B.has(x)); return inter.length / (new Set([...A,...B]).size || 1); }
+<script>
+/*
+  --- INSTRUCCIONES DE DATOS (cómo deben verse los JSON) ---
+  /data/FPC.json and /data/PPC.json etc. (FXX.json y PXX.json)
+  Ejemplo (FPC.json):
+  [ "Coordinar reuniones", "Gestionar proyectos", "Supervisar voluntarios" ]
 
-  // simple tokenizer
-  function tokens(text){ return cleanText(text).split(/\s+/).filter(Boolean); }
-
-  // ----------------- PDF extraction -----------------
-  async function pdfToText(file){
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-    let full='';
-    for(let i=1;i<=pdf.numPages;i++){
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      const pageText = content.items.map(it=>it.str).join(' ');
-      full += ' ' + pageText;
-    }
-    return full;
+  advices.json:
+  {
+    "functions": "Recomendación si baja concordancia en funciones",
+    "profile": "Recomendación si baja concordancia en perfil",
+    "keywords": "Recomendación privada si baja concordancia de palabras clave"
   }
 
-  // ----------------- Scoring logic (simple, client-side) -----------------
-  async function analyze(cvText, chapter, position, functionsList, profilesList, indicators, keywordsByUni){
-    const out = {};
-    const cleanCv = cleanText(cvText);
-
-    // 1) Perfil: compare CV vs functions list and profile list
-    const funcScores = functionsList.map(item=> ({item, score: jaccard(cleanCv,item)})).sort((a,b)=>b.score-a.score);
-    const profScores = profilesList.map(item=> ({item, score: jaccard(cleanCv,item)})).sort((a,b)=>b.score-a.score);
-    out.perfil = {functionsTop:funcScores.slice(0,5), profilesTop:profScores.slice(0,5)};
-
-    // 2) Indicadores: for each indicator (three per position) measure keyword coverage for the selected chapter
-    out.indicadores = [];
-    const uniKeywords = (keywordsByUni[chapter] && keywordsByUni[chapter][position]) || {};
-    for(const ind of indicators[position] || []){
-      const kwList = uniKeywords[ind] || [];
-      const matches = kwList.map(kw => ({kw, present: cleanCv.includes(kw.toLowerCase())}));
-      const matchedCount = matches.filter(m=>m.present).length;
-      out.indicadores.push({indicator:ind, keywords:matches, matchedCount});
-    }
-
-    // 3) Presentacion: basic heuristics
-    const words = tokens(cleanCv);
-    const sentences = cvText.split(/[\.\!\?]+/).map(s=>s.trim()).filter(Boolean);
-    const avgWordsPerSentence = sentences.length? Math.round(words.length / sentences.length): 0;
-    const longWordsPercent = words.filter(w=>w.length>12).length / (words.length||1);
-    const repeatedSpaces = /\s{2,}/.test(cvText);
-    out.presentacion = {wordsCount:words.length, sentencesCount:sentences.length, avgWordsPerSentence, longWordsPercent, repeatedSpaces};
-
-    // 4) Overall: combine simple normalized scores
-    const funcScore = funcScores[0]?.score||0; const profScore = profScores[0]?.score||0;
-    const indicatorScore = out.indicadores.length? (out.indicadores.reduce((s,i)=>s+i.matchedCount,0) / (out.indicadores.length*5)) : 0; // assume up to 5 keywords
-    const presentationScore = Math.max(0, 1 - longWordsPercent - (repeatedSpaces?0.1:0) - Math.abs(avgWordsPerSentence-20)/100 );
-    out.global = {
-      funcScore: Math.round(funcScore*100),
-      profScore: Math.round(profScore*100),
-      indicatorScore: Math.round(indicatorScore*100),
-      presentationScore: Math.round(presentationScore*100),
-      total: Math.round((funcScore+profScore+indicatorScore+presentationScore)/4*100)
-    };
-
-    return out;
+  indicators.json:
+  {
+    "Universidad A": {
+      "PC": { "perfil": ["liderazgo","gestión"], "funciones": ["coordinar","supervisar"] },
+      "IC": { ... }
+    },
+    "Universidad B": { ... }
   }
 
-  // ----------------- UI wiring -----------------
-  document.getElementById('run').addEventListener('click', async ()=>{
-    const name = document.getElementById('name').value || 'Sin nombre';
-    const chapter = document.getElementById('chapter').value;
-    const position = document.getElementById('position').value;
-    const file = document.getElementById('cvfile').files[0];
-    if(!file){ alert('Sube la hoja de vida en PDF'); return; }
+  Coloca esos archivos en /data en el mismo repo para que fetch los cargue desde GitHub Pages.
+*/
 
-    // load configured data
-    const functionsList = await fetchJson(dataConfig.functionsBase + position + '.json') || ['(falta archivo functions)'];
-    const profilesList = await fetchJson(dataConfig.profilesBase + position + '.json') || ['(falta archivo profiles)'];
-    const indicators = await fetchJson(dataConfig.indicatorsFile) || {};
-    const keywordsByUni = await fetchJson(dataConfig.keywordsFile) || {};
+// util: tokenize simple
+function tokenize(text){
+  return text
+    .toLowerCase()
+    .replace(/[\u2018\u2019\u201c\u201d]/g,'')
+    .replace(/[^a-z0-9áéíóúñ\s]/g,' ')
+    .split(/\s+/)
+    .filter(w=>w.length>2);
+}
 
-    // extract text
-    const cvText = await pdfToText(file);
+function tfVector(tokens){
+  const v={};
+  tokens.forEach(t=> v[t]=(v[t]||0)+1);
+  return v;
+}
 
-    // analyze
-    const res = await analyze(cvText, chapter, position, functionsList, profilesList, indicators, keywordsByUni);
+function dot(a,b){let s=0; for(const k in a) if(b[k]) s+=a[k]*b[k]; return s}
+function norm(v){let s=0; for(const k in v) s+=v[k]*v[k]; return Math.sqrt(s)}
 
-    // render
-    document.getElementById('output').style.display='block';
-    document.getElementById('title').innerText = `Análisis hoja de vida — ${name} — ${position}`;
-    document.getElementById('summary').innerHTML = `<strong>Puntaje total estimado:</strong> ${res.global.total}% — (Funcion ${res.global.funcScore}%, Perfil ${res.global.profScore}%, Indicadores ${res.global.indicatorScore}%, Presentación ${res.global.presentationScore}%)`;
+function cosine(a,b){const denom=norm(a)*norm(b); if(denom===0) return 0; return dot(a,b)/denom}
 
-    const rdiv = document.getElementById('results'); rdiv.innerHTML='';
-    const p1 = document.createElement('div'); p1.innerHTML = `<h4>Perfil - funciones (top matches)</h4><pre>${res.perfil.functionsTop.map(x=>`${Math.round(x.score*100)}% — ${x.item}`).join('\n')}</pre>`;
-    const p2 = document.createElement('div'); p2.innerHTML = `<h4>Perfil - características (top matches)</h4><pre>${res.perfil.profilesTop.map(x=>`${Math.round(x.score*100)}% — ${x.item}`).join('\n')}</pre>`;
-    rdiv.appendChild(p1); rdiv.appendChild(p2);
+// convierte score [0,1] a escala 1..5
+function toScale(score){
+  return Math.max(1, Math.round((score*4)+1)); // 0->1, 1->5
+}
 
-    const indDiv = document.createElement('div'); indDiv.innerHTML = `<h4>Indicadores (por indicador)</h4>${res.indicadores.map(i=>`<div><strong>${i.indicator}</strong> — Matched: ${i.matchedCount}/${i.keywords.length}<pre>${i.keywords.map(k=>`${k.present? '✔':'✖'} ${k.kw}`).join('\n')}</pre></div>`).join('')}`;
-    rdiv.appendChild(indDiv);
+async function loadJSON(path){
+  try{ const r=await fetch(path); if(!r.ok) throw new Error('No encontrado '+path); return await r.json() }catch(e){console.warn(e); return null}
+}
 
-    document.getElementById('comments').innerText = `Sugerencias:\n- Revisar ortografía y coherencia general (este starter hace chequeos heurísticos; para un análisis avanzado considera integrar LanguageTool).\n- Enfatizar en el CV ejemplos concretos que muestren las funciones listadas para aumentar la similitud.\n- Aumentar detalle en eventos organizados y participación en proyectos ANEIAP.`;
-  });
+async function loadChapters(){
+  const ind = await loadJSON('data/indicators.json');
+  const select=document.getElementById('chapter');
+  select.innerHTML='';
+  if(ind){
+    Object.keys(ind).forEach(k=>{
+      const opt=document.createElement('option'); opt.value=k; opt.textContent=k; select.appendChild(opt);
+    });
+  } else {
+    const opt=document.createElement('option'); opt.value=''; opt.textContent='(Sube data/indicators.json)'; select.appendChild(opt);
+  }
+}
 
-  document.getElementById('reset').addEventListener('click', ()=>{ document.getElementById('name').value=''; document.getElementById('cvfile').value=''; document.getElementById('output').style.display='none'; });
-  </script>
+// extracción simple de PDF (si se sube) usando API browser (FileReader + PDF.js no incluido). Si PDF no se extrae, pedir pegar texto.
+async function fileToText(file){
+  if(!file) return null;
+  if(file.name.toLowerCase().endsWith('.txt')){
+    return await file.text();
+  }
+  // intenta usar PDF text extraction si browser soporta
+  try{
+    // sin librería avanzada, devolvemos instrucciones para pegar si no es txt
+    return null;
+  }catch(e){return null}
+}
+
+async function analyze(){
+  const name=document.getElementById('name').value.trim()||'[Sin nombre]';
+  const role=document.getElementById('role').value;
+  const chapter=document.getElementById('chapter').value;
+  const file=document.getElementById('file').files[0];
+  let text = document.getElementById('cvtext').value.trim();
+  if(!text && file) text = await fileToText(file);
+
+  const reportDiv=document.getElementById('report'); reportDiv.innerHTML='';
+  if(!text){ reportDiv.innerHTML='<p class="small">No se encontró texto. Pega el texto del CV en el área de texto o sube un archivo .txt. (La extracción de PDF no está garantizada sin librerías adicionales.)</p>'; return }
+
+  // cargar datos
+  const indicators = await loadJSON('data/indicators.json') || {};
+  const advices = await loadJSON('data/advices.json') || {};
+  const F = await loadJSON('data/F'+role+'.json') || await loadJSON('data/F'+role.toUpperCase()+'.json') || [];
+  const P = await loadJSON('data/P'+role+'.json') || await loadJSON('data/P'+role.toUpperCase()+'.json') || [];
+
+  // tokeniza todo
+  const cvTokens = tokenize(text);
+  const cvTf = tfVector(cvTokens);
+
+  // funciones: calculamos similitud entre CV y lista de funciones (tratamos la lista como doc)
+  const fDocTokens = tokenize(F.join(' ')); const fTf = tfVector(fDocTokens);
+  const pDocTokens = tokenize(P.join(' ')); const pTf = tfVector(pDocTokens);
+
+  const fScore = cosine(cvTf, fTf); const pScore = cosine(cvTf,pTf);
+
+  // keywords por universidad
+  let kwScore = 0;
+  if(indicators[chapter] && indicators[chapter][role]){
+    const k = indicators[chapter][role];
+    const keys = (k.perfil||[]).concat(k.funciones||[]);
+    const keyTokens = tokenize(keys.join(' '));
+    const keyTf = tfVector(keyTokens);
+    kwScore = cosine(cvTf,keyTf);
+  }
+
+  // mapeo a escala 1..5
+  const funcScale = toScale(fScore);
+  const perfScale = toScale(pScore);
+  const kwScale = toScale(kwScore);
+
+  // Presentación (heurística simple)
+  const sentences = text.split(/[\.\?\!]\s+/).filter(Boolean);
+  const avgWords = text.split(/\s+/).filter(Boolean).length / Math.max(1,sentences.length);
+  let presScore = 5;
+  if(avgWords>30 || avgWords<6) presScore = 3; // orilla
+  if(text.match(/[áéíóúñ]/)===null) presScore = Math.min(presScore,3);
+  // comprobación básica de mayúsculas al inicio de oraciones
+  const badCaps = sentences.filter(s=> s.trim().length>0 && s.trim()[0] === s.trim()[0].toLowerCase()).length;
+  if(badCaps>Math.max(1,sentences.length*0.3)) presScore = Math.max(1,presScore-1);
+
+  // Globales
+  const globalAvg = Math.round(((funcScale+perfScale+kwScale+presScore)/4)*100)/100;
+
+  // Consejos: si cualquiera < 3.5, mostrar advices
+  const issues = [];
+  if(funcScale<4) issues.push({k:'functions',score:funcScale});
+  if(perfScale<4) issues.push({k:'profile',score:perfScale});
+  if(kwScale<4) issues.push({k:'keywords',score:kwScale});
+  if(presScore<4) issues.push({k:'presentation',score:presScore});
+
+  // render
+  const title = document.createElement('h2'); title.textContent = `Análisis hoja de vida — ${name} (${role})`;
+  reportDiv.appendChild(title);
+
+  const s1 = document.createElement('div'); s1.className='section';
+  s1.innerHTML = `<strong>Perfil del aspirante — evaluación</strong><p>Funciones: <span class='score'>${funcScale}</span> (similitud ${fScore.toFixed(2)}) — Perfil: <span class='score'>${perfScale}</span> (similitud ${pScore.toFixed(2)})</p>`;
+  reportDiv.appendChild(s1);
+
+  const s2=document.createElement('div'); s2.className='section';
+  s2.innerHTML = `<strong>Experiencia en ANEIAP / Eventos</strong>
+    <p>Concordancia palabras clave (según capítulo): <span class='score'>${kwScale}</span> (similitud ${kwScore.toFixed(2)})</p>
+    <p>Presentación (heurística): <span class='score'>${presScore}</span> — (oración promedio ${avgWords.toFixed(1)} palabras)</p>`;
+  reportDiv.appendChild(s2);
+
+  const totals=document.createElement('div'); totals.className='section';
+  totals.innerHTML = `<strong>Resultados globales</strong>
+    <p>Promedio general (funciones,perfil,keywords,presentación): <span class='score'>${globalAvg}</span></p>`;
+  reportDiv.appendChild(totals);
+
+  const cargoSec=document.createElement('div'); cargoSec.className='section';
+  cargoSec.innerHTML = `<strong>Informe por cargo</strong>
+    <p>Cargo: ${role} — Recomendación: ${globalAvg>=4? 'Apto o con buena correspondencia': (globalAvg>=3? 'Parcialmente apto, revisar ítems débiles':'No apto — necesita mejora')}</p>`;
+  reportDiv.appendChild(cargoSec);
+
+  const comments=document.createElement('div'); comments.className='section';
+  let comHtml = '<strong>Comentarios finales</strong><ul>';
+  if(issues.length===0) comHtml += '<li>Buen ajuste del CV a los requisitos básicos.</li>';
+  else{
+    issues.forEach(it=>{
+      const advice = advices[it.k] || 'Revisa los criterios relacionados y añade evidencia clara en el CV.';
+      comHtml += `<li>Indicador: ${it.k} — puntaje ${it.score}. Consejo: ${advice}</li>`;
+    });
+  }
+  comHtml += '</ul>';
+  comments.innerHTML = comHtml;
+  reportDiv.appendChild(comments);
+
+  // mostrar lista de coincidencias de funciones/perfil (palabras más frecuentes compartidas)
+  const commonWords = getCommonWords(cvTf, fTf, 8);
+  const extra=document.createElement('div'); extra.className='section';
+  extra.innerHTML = `<strong>Coincidencias relevantes (funciones)</strong><p class='small'>${commonWords.join(', ')}</p>`;
+  reportDiv.appendChild(extra);
+}
+
+function getCommonWords(a,b,limit){
+  const arr=[]; for(const k in a) if(b[k]) arr.push({k,score:a[k]*b[k]});
+  arr.sort((x,y)=>y.score-x.score); return arr.slice(0,limit).map(x=>x.k);
+}
+
+// eventos
+document.getElementById('analyze').addEventListener('click', ()=>{ analyze(); });
+document.getElementById('clear').addEventListener('click', ()=>{ document.getElementById('cvtext').value=''; document.getElementById('name').value=''; document.getElementById('report').innerHTML=''; });
+
+// on load
+loadChapters();
+</script>
 </body>
 </html>
