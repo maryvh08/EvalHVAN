@@ -1,52 +1,62 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <title>ATS ANEIAP</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>ATS ANEIAP — Concordancia CV</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
     <header>
-        <h1>ATS – Evaluación de Hojas de Vida ANEIAP</h1>
+        <h1>ATS — Evaluación de concordancia (Funciones · Perfil · Indicadores)</h1>
+        <p class="sub">Analiza concordancia entre hoja de vida y los ítems del cargo (sin backend).</p>
     </header>
 
-    <section id="form-section">
-        <h2>Evaluar hoja de vida</h2>
+    <main>
+        <section id="form-section" class="card">
+            <h2>Evaluar hoja de vida</h2>
 
-        <label>Nombre del aspirante:</label>
-        <input id="nombre" type="text" placeholder="Ej. Juan Pérez">
+            <label for="nombre">Nombre del aspirante</label>
+            <input id="nombre" type="text" placeholder="Ej. María Pérez">
 
-        <label>Cargo al que aspira:</label>
-        <select id="cargo">
-            <option value="">Seleccione...</option>
-            <option value="PC">PC</option>
-            <option value="IC">IC</option>
-            <option value="CCP">CCP</option>
-            <option value="DCA">DCA</option>
-            <option value="DCC">DCC</option>
-            <option value="DCD">DCD</option>
-            <option value="DCF">DCF</option>
-            <option value="DCM">DCM</option>
-        </select>
+            <label for="cargo">Cargo al que aspira</label>
+            <select id="cargo">
+                <option value="">Seleccione...</option>
+                <option value="PC">PC</option>
+                <option value="IC">IC</option>
+                <option value="CCP">CCP</option>
+                <option value="DCA">DCA</option>
+                <option value="DCC">DCC</option>
+                <option value="DCD">DCD</option>
+                <option value="DCF">DCF</option>
+                <option value="DCM">DCM</option>
+            </select>
 
-        <label>Capítulo / Universidad:</label>
-        <input id="capitulo" type="text" placeholder="Ej. UNIGUAJIRA">
+            <label for="capitulo">Capítulo / Universidad</label>
+            <input id="capitulo" type="text" placeholder="Ej. UNIGUAJIRA">
 
-        <label>Hoja de vida (texto):</label>
-        <textarea id="cv" placeholder="Copia aquí tu hoja de vida..." rows="12"></textarea>
+            <label for="cv">Hoja de vida (texto)</label>
+            <textarea id="cv" rows="12" placeholder="Pega aquí el texto completo de la hoja de vida..."></textarea>
 
-        <button id="evaluar">Evaluar hoja de vida</button>
-    </section>
+            <div class="row">
+                <button id="evaluar">Evaluar hoja de vida</button>
+                <button id="print" title="Imprimir / Guardar como PDF">Imprimir / Guardar PDF</button>
+            </div>
+            <p class="note">Asegúrate de tener en <code>/data/</code> tus archivos JSON: <code>FXX.json</code>, <code>PXX.json</code>, <code>indicators.json</code>, <code>advices.json</code>.</p>
+        </section>
 
-    <section id="report-section">
-        <h2>Reporte generado</h2>
-        <div id="report-container"></div>
-    </section>
+        <section id="report-section" class="card">
+            <h2>Reporte generado</h2>
+            <div id="report-container">
+                <p class="muted">Aquí aparecerá el reporte después de evaluar.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <small>Proyecto ATS — ANEIAP (versión simple, offline)</small>
+    </footer>
 
     <script src="app.js"></script>
 </body>
-
 </html>
