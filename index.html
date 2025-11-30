@@ -1,37 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>ATS ANEIAP</title>
+    <meta charset="UTF-8">
+    <title>Evaluación HV ANEIAP</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1>Evaluación Hoja de Vida</h1>
+    <form id="hvForm">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required><br><br>
 
-<h1>Analizador de Hoja de Vida ANEIAP</h1>
+        <label>Capítulo:</label>
+        <select name="capitulo" required>
+            <option value="">Selecciona tu capítulo</option>
+            <option value="UNIGUAJIRA">UNIGUAJIRA</option>
+            <option value="UNIMAGDALENA">UNIMAGDALENA</option>
+            <!-- agrega los demás capítulos -->
+        </select><br><br>
 
-<form action="/analizar" method="POST" enctype="multipart/form-data">
+        <label>Cargo:</label>
+        <select name="cargo" required>
+            <option value="">Selecciona el cargo</option>
+            <option value="PC">PC</option>
+            <option value="IC">IC</option>
+            <option value="CCP">CCP</option>
+            <option value="DCA">DCA</option>
+            <option value="DCC">DCC</option>
+            <option value="DCD">DCD</option>
+            <option value="DCF">DCF</option>
+            <option value="DCM">DCM</option>
+        </select><br><br>
 
-    <label>Nombre del aspirante:</label>
-    <input type="text" name="nombre" required><br>
+        <label>Hoja de vida (PDF):</label>
+        <input type="file" name="hvfile" accept=".pdf" required><br><br>
 
-    <label>Cargo al que aspira:</label>
-    <select name="cargo" required>
-        {% for c in cargos %}
-        <option value="{{c}}">{{c}}</option>
-        {% endfor %}
-    </select><br>
+        <button type="submit">Analizar</button>
+    </form>
 
-    <label>Capítulo:</label>
-    <select name="capitulo" required>
-        {% for u in universidades %}
-        <option value="{{u}}">{{u}}</option>
-        {% endfor %}
-    </select><br>
+    <div id="resultado"></div>
 
-    <label>Sube tu hoja de vida (PDF):</label>
-    <input type="file" name="pdf" accept="application/pdf" required><br>
-
-    <button type="submit">Analizar</button>
-
-</form>
-
+    <script src="script.js"></script>
 </body>
 </html>
