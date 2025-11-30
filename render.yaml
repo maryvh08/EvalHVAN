@@ -1,7 +1,8 @@
 services:
   - type: web
     name: evalhvan
-    env: python
+    key: PYTHON_VERSION
+    value: "3.10.0"
     region: oregon
     plan: free
     buildCommand: |
