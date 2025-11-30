@@ -1,6 +1,2 @@
-EVALHVAN/
-    manage.py
-    evalhv_backend/
-        settings.py
-        urls.py
-        wsgi.py
+ROOT_URLCONF = "evalhv_backend.urls"
+WSGI_APPLICATION = "evalhv_backend.wsgi.application"
