@@ -1,39 +1,53 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-    background: #f6f6f6;
-}
+from fastapi import FastAPI, UploadFile, Form
+from fastapi.middleware.cors import CORSMiddleware
+import json
+import fitz  # pip install PyMuPDF
+import difflib
 
-h1, h2 {
-    color: #333;
-}
+app = FastAPI()
 
-form {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 420px;
-}
+# Para permitir que GitHub Pages haga requests al backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-label {
-    display: block;
-    margin-top: 12px;
-}
+# Carga de archivos JSON
+with open("data/indicators.json") as f:
+    indicators = json.load(f)
+with open("data/advices.json") as f:
+    advices = json.load(f)
+# Aquí cargar F{Cargo} y P{Cargo} según necesites
 
-input, select, button {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-}
+@app.post("/analizar")
+async def analizar(nombre: str = Form(...), capitulo: str = Form(...), cargo: str = Form(...), hvfile: UploadFile = UploadFile(...)):
+    # Leer PDF
+    pdf_bytes = await hvfile.read()
+    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+    text = ""
+    for page in doc:
+        text += page.get_text()
 
-button {
-    background: #007bff;
-    border: none;
-    color: white;
-    margin-top: 20px;
-    cursor: pointer;
-}
+    # Aquí iría la lógica de análisis de cada sección
+    # Ejemplo: calcular similitud con funciones y perfil
+    # score_funciones = ...
+    # score_perfil = ...
+    # score_palabras_clave = ...
 
-button:hover {
-    background: #0056b3;
-}
+    # Ejemplo de respuesta
+    resultado = {
+        "titulo": f"Análisis hoja de vida {nombre} - {cargo}",
+        "perfil": {"funciones": 4, "perfil": 3.5},
+        "experiencia": {
+            "Experiencia en ANEIAP": 4,
+            "Eventos organizados": 3,
+            "Asistencia a eventos": 4,
+            "consejos": ["Mejorar la redacción de logros académicos."]
+        },
+        "global": 3.8,
+        "comentarios": "Buen desempeño, se recomienda reforzar la experiencia en eventos."
+    }
+
+    return resultado
