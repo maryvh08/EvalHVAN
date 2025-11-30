@@ -1,22 +1,17 @@
 import os
 from pathlib import Path
 
-# ⭐ Nombre de la carpeta donde están settings.py, urls.py y wsgi.py ⭐
-PROJECT_NAME = "EVALHVAN"
+# Nombre de la carpeta donde está settings.py, urls.py, wsgi.py
+PROJECT_NAME = "evalhvan"
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
 
-# DEBUG = 1 para desarrollo | DEBUG = 0 para producción
 DEBUG = os.environ.get("DEBUG", "1") == "1"
 
-ALLOWED_HOSTS = ["*"]  # Render gestiona el dominio automáticamente
+ALLOWED_HOSTS = ["*"]
 
-
-# -----------------------------
-#  Aplicaciones instaladas
-# -----------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,18 +20,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # API
+    # API REST para backend funcional
     'rest_framework',
 ]
 
-
-# -----------------------------
-#  Middleware
-# -----------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-
-    # Whitenoise → sirve archivos estáticos en producción
     'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -47,21 +36,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
-# -----------------------------
-#  URLs y WSGI
-# -----------------------------
 ROOT_URLCONF = f"{PROJECT_NAME}.urls"
-WSGI_APPLICATION = f"{PROJECT_NAME}.wsgi.application"
 
-
-# -----------------------------
-#  Templates
-# -----------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  # solo si usas HTML
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,10 +54,9 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = f"{PROJECT_NAME}.wsgi.application"
 
-# -----------------------------
-#  Base de datos SQLite
-# -----------------------------
+# Base de datos simple (funciona en Render)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -85,10 +64,7 @@ DATABASES = {
     }
 }
 
-
-# -----------------------------
-#  Validadores de contraseña
-# -----------------------------
+# Validadores Django
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -96,39 +72,23 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# -----------------------------
-#  Config regional
-# -----------------------------
 LANGUAGE_CODE = 'es-co'
 TIME_ZONE = 'America/Bogota'
-
 USE_I18N = True
 USE_TZ = True
 
-
-# -----------------------------
-#  Archivos estáticos
-# -----------------------------
+# Archivos estáticos
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
-# -----------------------------
-#  Archivos multimedia
-# -----------------------------
+# Archivos subidos (PDFs de hojas de vida)
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# -----------------------------
-#  Config Django REST Framework
-# -----------------------------
+# Configuración de la API
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
