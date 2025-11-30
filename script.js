@@ -1,53 +1,28 @@
-from fastapi import FastAPI, UploadFile, Form
-from fastapi.middleware.cors import CORSMiddleware
-import json
-import fitz  # pip install PyMuPDF
-import difflib
+document.getElementById("hvForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
 
-app = FastAPI()
+    const response = await fetch("https://tu-backend.repl.co/analizar", {
+        method: "POST",
+        body: formData
+    });
 
-# Para permitir que GitHub Pages haga requests al backend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    const data = await response.json();
 
-# Carga de archivos JSON
-with open("data/indicators.json") as f:
-    indicators = json.load(f)
-with open("data/advices.json") as f:
-    advices = json.load(f)
-# Aquí cargar F{Cargo} y P{Cargo} según necesites
-
-@app.post("/analizar")
-async def analizar(nombre: str = Form(...), capitulo: str = Form(...), cargo: str = Form(...), hvfile: UploadFile = UploadFile(...)):
-    # Leer PDF
-    pdf_bytes = await hvfile.read()
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    text = ""
-    for page in doc:
-        text += page.get_text()
-
-    # Aquí iría la lógica de análisis de cada sección
-    # Ejemplo: calcular similitud con funciones y perfil
-    # score_funciones = ...
-    # score_perfil = ...
-    # score_palabras_clave = ...
-
-    # Ejemplo de respuesta
-    resultado = {
-        "titulo": f"Análisis hoja de vida {nombre} - {cargo}",
-        "perfil": {"funciones": 4, "perfil": 3.5},
-        "experiencia": {
-            "Experiencia en ANEIAP": 4,
-            "Eventos organizados": 3,
-            "Asistencia a eventos": 4,
-            "consejos": ["Mejorar la redacción de logros académicos."]
-        },
-        "global": 3.8,
-        "comentarios": "Buen desempeño, se recomienda reforzar la experiencia en eventos."
+    // Mostrar resultados
+    let html = `<h2>${data.titulo}</h2>`;
+    html += `<p><strong>Perfil:</strong> Funciones: ${data.perfil.funciones}, Perfil: ${data.perfil.perfil}</p>`;
+    html += `<p><strong>Experiencia:</strong></p><ul>`;
+    for (const [key, value] of Object.entries(data.experiencia)) {
+        if(key !== "consejos") html += `<li>${key}: ${value}</li>`;
     }
+    html += `</ul>`;
+    html += `<p><strong>Consejos:</strong></p><ul>`;
+    data.experiencia.consejos.forEach(c => html += `<li>${c}</li>`);
+    html += `</ul>`;
+    html += `<p><strong>Global:</strong> ${data.global}</p>`;
+    html += `<p><strong>Comentarios:</strong> ${data.comentarios}</p>`;
 
-    return resultado
+    document.getElementById("resultado").innerHTML = html;
+});
