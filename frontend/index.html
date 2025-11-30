@@ -1,65 +1,30 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Evaluación Hoja de Vida ANEIAP</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h1>Evaluación Hoja de Vida</h1>
-    <form id="hvForm">
-        <label>Nombre:</label>
-        <input type="text" name="nombre" required><br><br>
+<form id="form">
+  <input name="name" id="name" placeholder="Nombre completo" required />
+  <select id="chapter" name="chapter"> 
+    <option>UNIGUAJIRA</option>
+    <option>UNIMAGDALENA</option>
+    <!-- agrega el resto -->
+  </select>
+  <select id="cargo" name="cargo">
+    <option>PC</option><option>IC</option><!-- etc -->
+  </select>
+  <input type="file" id="cv" accept="application/pdf" required />
+  <button type="submit">Analizar</button>
+</form>
+<div id="resultPanel"></div>
 
-        <label>Capítulo:</label>
-        <select name="capitulo" required>
-            <option value="">Selecciona tu capítulo</option>
-            <option value="UNIGUAJIRA">UNIGUAJIRA</option>
-            <option value="UNIMAGDALENA">UNIMAGDALENA</option>
-            <option value="UNINORTE">UNINORTE</option>
-            <option value="UNIATLÁNTICO">UNIATLÁNTICO</option>
-            <option value="CUC">CUC</option>
-            <option value="UNISIMÓN">UNISIMÓN</option>
-            <option value="LIBREQUILLA">LIBREQUILLA</option>
-            <option value="UTB">UTB</option>
-            <option value="UFPS">UFPS</option>
-            <option value="UNALMED">UNALMED</option>
-            <option value="UPBMED">UPBMED</option>
-            <option value="UDEA">UDEA</option>
-            <option value="UTP">UTP</option>
-            <option value="UNALMA">UNALMA</option>
-            <option value="LIBRECALI">LIBRECALI</option>
-            <option value="UNIVALLE">UNIVALLE</option>
-            <option value="ICESI">ICESI</option>
-            <option value="USC">USC</option>
-            <option value="UDISTRITAL">UDISTRITAL</option>
-            <option value="UNALBOG">UNALBOG</option>
-            <option value="UPBMONTERÍA">UPBMONTERÍA</option>
-            <option value="AREANDINA">AREANDINA</option>
-            <option value="UNICÓDOBA">UNICÓDOBA</option>
-        </select><br><br>
-
-        <label>Cargo:</label>
-        <select name="cargo" required>
-            <option value="">Selecciona el cargo</option>
-            <option value="PC">PC</option>
-            <option value="IC">IC</option>
-            <option value="CCP">CCP</option>
-            <option value="DCA">DCA</option>
-            <option value="DCC">DCC</option>
-            <option value="DCD">DCD</option>
-            <option value="DCF">DCF</option>
-            <option value="DCM">DCM</option>
-        </select><br><br>
-
-        <label>Hoja de vida (PDF):</label>
-        <input type="file" name="hvfile" accept=".pdf" required><br><br>
-
-        <button type="submit">Analizar</button>
-    </form>
-
-    <div id="resultado"></div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+<script>
+document.getElementById('form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const fd = new FormData();
+  fd.append('name', document.getElementById('name').value);
+  fd.append('chapter', document.getElementById('chapter').value);
+  fd.append('cargo', document.getElementById('cargo').value);
+  fd.append('cv', document.getElementById('cv').files[0]);
+  const resp = await fetch('https://TU_BACKEND_URL/api/analyze/', {
+    method:'POST', body: fd
+  });
+  const json = await resp.json();
+  document.getElementById('resultPanel').innerText = JSON.stringify(json, null, 2);
+});
+</script>
