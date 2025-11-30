@@ -1,9 +1,7 @@
-flask
-werkzeug
+Django>=4.2
+gunicorn
 PyPDF2
 scikit-learn
 numpy
 pandas
-jinja2
-python-Levenshtein
-nltk
+python-mimeparse
