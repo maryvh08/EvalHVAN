@@ -1,6 +1,7 @@
-from django.urls import path
-from app_analyzer.views import analyze
+from django.contrib import admin
+from django.urls import path, include
 
 urlpatterns = [
-    path('api/analyze/', analyze),
+    path('admin/', admin.site.urls),
+    path('', include('evalhvan.urls')),
 ]
