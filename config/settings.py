@@ -4,10 +4,7 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# -----------------------
-#  BASICS
-# -----------------------
-SECRET_KEY = os.environ.get("SECRET_KEY", "change-me-in-production")
+SECRET_KEY = os.environ.get("SECRET_KEY", "change-me")
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
@@ -17,9 +14,6 @@ ALLOWED_HOSTS = [
     os.environ.get("RENDER_EXTERNAL_HOSTNAME", "")
 ]
 
-# -----------------------
-#  APPS
-# -----------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,16 +22,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Tus apps
+    # Tu app
     'evalhvan',
 ]
 
-# -----------------------
-#  MIDDLEWARE
-# -----------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Para Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -46,11 +37,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'evalhvan.urls'
+ROOT_URLCONF = 'config.urls'
 
-# -----------------------
-#  TEMPLATES
-# -----------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -67,11 +55,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'evalhvan.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
-# -----------------------
-#  DATABASE
-# -----------------------
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
@@ -79,42 +64,21 @@ DATABASES = {
     )
 }
 
-# -----------------------
-# PASSWORDS
-# -----------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# -----------------------
-# LANGUAGE / TIME
-# -----------------------
 LANGUAGE_CODE = 'es-co'
 TIME_ZONE = 'America/Bogota'
 USE_I18N = True
 USE_TZ = True
 
-# -----------------------
-# STATIC FILES (Render)
-# -----------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# -----------------------
-# DEFAULT PK
-# -----------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
