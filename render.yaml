@@ -1,11 +1,12 @@
 services:
   - type: web
     name: evalhvan
-    key: PYTHON_VERSION
-    value: "3.10.0"
-    region: oregon
-    plan: free
-    buildCommand: |
-      pip install -r requirements.txt
-      python manage.py collectstatic --noinput
-    startCommand: gunicorn EVALHVAN.wsgi:application --bind 0.0.0.0:$PORT
+    env: python
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
