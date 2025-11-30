@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: evalhvan-backend
+    name: evalhvan
     env: python
     region: oregon
     plan: free
